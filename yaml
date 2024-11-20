@@ -1,0 +1,30 @@
+trigger:
+- main  
+
+variables:
+  
+  azureSubscription: '<name>'
+  resourceGroup: '<your-resource-group-name>'
+  storageAccountName: '<your-storage-account-name>'
+  containerName: '<your-container-name>'
+  stateFileName: 'terraform.tfstate'
+  environment: 'dev'  # You can change it to your specific environment
+
+stages:
+- stage: TerraformValidateAndPlan
+  jobs:
+  - job: Terraform
+    displayName: 'Terraform Validate and Plan for Dev Environment'
+    pool:
+      vmImage: 'ubuntu-latest'  
+
+    steps:
+    - task: UseTerraform@0
+      displayName: 'Install Terraform'
+      inputs:
+        version: 'latest'  
+
+    - task: AzureCLI@2
+      displayName: 'Azure CLI Login'
+      inputs:
+        azureSubscription: $(azureSubscription)
