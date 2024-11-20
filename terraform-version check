@@ -1,0 +1,24 @@
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- script: |
+    #!/bin/bash
+    output_file="terraform_version.txt"
+    echo "Checking if terraform is installed in the agent machine"
+    if command -v terraform &> /dev/null; then
+        terraform version | head -n 1 > "$output_file"
+        echo "Terraform is installed. Version info written to $output_file."
+    else
+        echo "Terraform is not installed." > "$output_file"
+        echo "Terraform is not installed. Message written to $output_file."
+  
+- task: PublishPipelineArtifact@1
+  inputs:
+    targetPath: '$(System.DefaultWorkingDirectory)/terraform_version.txt'
+    artifact: 'myArtifacts'
+    publishLocation: pipeline
+  displayName: 'Publish Artifacts'
